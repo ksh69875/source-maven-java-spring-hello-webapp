@@ -34,7 +34,7 @@ pipeline {
       agent any
       steps {
         sh 'docker image tag webapp:hello-world 69875/webapp:$BUILD_NUMBER'
-        sh 'docker image tag webapp:hello-world 69875/webapp:$latest'
+        sh 'docker image tag webapp:hello-world 69875/webapp:latest'
       }
     }
     stage('Publish Docker Image') {
@@ -42,7 +42,7 @@ pipeline {
       steps {
         withDockerRegistry(credentialsId: 'docker-hub-token', url: 'https://index.docker.io/v1/') {
           sh 'docker image push 69875/webapp:$BUILD_NUMBER'
-          sh 'docker image push 69875/webapp:$latest'
+          sh 'docker image push 69875/webapp:latest'
         }
       }
     }
