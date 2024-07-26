@@ -1,7 +1,6 @@
-- name: playbook deploy webapp container
-  hosts: localhost
+- hosts: localhost
   connection: local
-  
+ 
   tasks:
   - name: Create & Start Container
     docker_container:
