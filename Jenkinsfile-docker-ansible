@@ -1,0 +1,59 @@
+pipeline {
+  agent none
+
+  stages {
+    stage('Checkout') {
+      agent {
+        docker { image 'maven:3-openjdk-17' }
+      }
+      steps {
+        git branch: 'main', url: 'https://github.com/ksh69875/source-maven-java-spring-hello-webapp.git'
+      }
+    }
+    stage('Build') {
+      agent {
+        docker { image 'maven:3-openjdk-17' }
+      }
+      steps {
+        sh 'mvn clean package -DskipTests=true'
+      }
+    }
+    stage('Test') {
+      agent {
+        docker { image 'maven:3-openjdk-17' }
+      }
+      steps {
+        sh 'mvn test'
+      }
+    }
+    stage('Build Docker Image') {
+      agent { label 'controller' }
+      steps {
+        sh 'docker image build -t myweb:hello-world .'
+      }
+    }
+    stage('Tag Docker Image') {
+      agent { label 'controller' }
+      steps {
+        sh 'docker image build -t myweb:hello-world 69875/myweb:$BUILD_NUMBER' # Tagging with build number
+        sh 'docker image build -t myweb:hello-world 69875/myweb:latest' # Tagging with latest
+      }
+    }
+    stage('Publish Docker Image') {
+      agent { label 'controller' }
+      steps {
+        withDockerRegistry(credentialsId: 'docker-hub-tokien', url: 'https://index.docker.io/v1/') {
+          sh 'docker image build -t myweb:hello-world 69875/myweb:$BUILD_NUMBER' # Tagging with build number
+          sh 'docker image build -t myweb:hello-world 69875/myweb:latest' # Tagging with latest
+        }
+      }
+    }
+    stage('Run Docker Container') {
+      agent { label 'controller' }
+      steps {
+        ansiblePlaybook(playbook: 'docker-container-deploy.yaml')
+      }
+    }
+  }
+}
+
