@@ -1,0 +1,19 @@
+controller:
+  image:
+    tag: "lts-jdk17"
+  serviceType: "LoadBalancer"
+  loadBalancerSourceRanges:
+    - 0.0.0.0/0
+    - 192.168.56.0/24
+  installPlugins:
+    - kubernetes
+    - workflow-aggregator
+    - git
+    - configuration-as-code
+    - pipeline-stage-view
+  admin:
+    password: "admin"
+
+persistence:
+  storageClass: "nfs-client"
+
