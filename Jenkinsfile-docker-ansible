@@ -35,16 +35,16 @@ pipeline {
     stage('Tag Docker Image') {
       agent { label 'controller' }
       steps {
-        sh 'docker image build -t myweb:hello-world 69875/myweb:$BUILD_NUMBER' # Tagging with build number
-        sh 'docker image build -t myweb:hello-world 69875/myweb:latest' # Tagging with latest
+        sh 'docker image build -t myweb:hello-world 69875/myweb:$BUILD_NUMBER' 
+        sh 'docker image build -t myweb:hello-world 69875/myweb:latest' 
       }
     }
     stage('Publish Docker Image') {
       agent { label 'controller' }
       steps {
         withDockerRegistry(credentialsId: 'docker-hub-tokien', url: 'https://index.docker.io/v1/') {
-          sh 'docker image build -t myweb:hello-world 69875/myweb:$BUILD_NUMBER' # Tagging with build number
-          sh 'docker image build -t myweb:hello-world 69875/myweb:latest' # Tagging with latest
+          sh 'docker image build -t myweb:hello-world 69875/myweb:$BUILD_NUMBER'
+          sh 'docker image build -t myweb:hello-world 69875/myweb:latest' 
         }
       }
     }
